@@ -1,7 +1,6 @@
 package org.vismayb.physfx.logging
 
 import javafx.scene.Scene
-import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 
@@ -14,7 +13,7 @@ import javafx.beans.property.Property
 
 import org.vismayb.physfx.logging.ui.BasePropertyView
 import org.vismayb.physfx.logging.ui.BooleanPropertyView
-import org.vismayb.physfx.logging.ui.NumberBasePropertyView
+import org.vismayb.physfx.logging.ui.NumberPropertyView
 
 class LoggingView : Stage() {
     val root = VBox()
@@ -31,24 +30,26 @@ class LoggingView : Stage() {
 
     fun addEntry(path: String, value: Property<*>) {
         if(!logEntries.containsKey(path)) {
-            // Check if value is a BooleanProperty
             val entryView: BasePropertyView<*> = when (value) {
-                is BooleanProperty -> {
-                    BooleanPropertyView(path, value.get())
-                }
-                is DoubleProperty, is IntegerProperty, is FloatProperty, is LongProperty -> {
-                    NumberBasePropertyView(path, value.value)
-                }
-                else -> {
-                    throw IllegalArgumentException("Unsupported property type for path: $path")
-                }
+                is BooleanProperty -> BooleanPropertyView(path, value.value)
+                is DoubleProperty, is IntegerProperty, is FloatProperty, is LongProperty ->
+                    NumberPropertyView(path, value.value)
+                else -> throw IllegalArgumentException("Unsupported property type for path: $path")
             }
+
+            when (value) {
+                is DoubleProperty, is IntegerProperty, is FloatProperty, is LongProperty ->
+                    value.addListener { _, _, newValue ->
+                        (entryView as NumberPropertyView).updateValue(newValue)
+                    }
+                is BooleanProperty ->
+                    value.addListener { _, _, newValue ->
+                        (entryView as BooleanPropertyView).updateValue(newValue)
+                    }
+            }
+
             logEntries[path] = entryView
             root.children.add(logEntries[path])
-        }
-
-        value.addListener { _, _, newValue ->
-            logEntries[path]?.updateValue()
         }
     }
 }

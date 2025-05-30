@@ -2,7 +2,7 @@ package org.vismayb.physfx.logging.ui
 
 import javafx.scene.control.Label
 
-class NumberBasePropertyView(path: String, value: Number) : BasePropertyView<Number>(path, value) {
+class NumberPropertyView(path: String, value: Number) : BasePropertyView<Number>(path, value) {
     private var valueLabel: Label = Label(value.toString())
 
     init {
