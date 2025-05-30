@@ -12,10 +12,15 @@ class BooleanPropertyView(path: String, value: Boolean) : BasePropertyView<Boole
 
     init {
         children.add(statusCircle)
+        updateValue(value);
     }
 
     override fun updateValue(newValue: Boolean) {
          super.updateValue(newValue)
-         statusCircle.setFill(if (newValue) Color.GREEN else Color.RED)
+        updateStatusCircle()
+    }
+
+    private fun updateStatusCircle() {
+        statusCircle.fill = if (value) Color.GREEN else Color.RED
     }
 }
