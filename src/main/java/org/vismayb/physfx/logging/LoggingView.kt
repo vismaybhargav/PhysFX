@@ -29,27 +29,29 @@ class LoggingView : Stage() {
     }
 
     fun addEntry(path: String, value: Property<*>) {
-        if(!logEntries.containsKey(path)) {
-            val entryView: BasePropertyView<*> = when (value) {
-                is BooleanProperty -> BooleanPropertyView(path, value.value)
-                is DoubleProperty, is IntegerProperty, is FloatProperty, is LongProperty ->
-                    NumberPropertyView(path, value.value)
-                else -> throw IllegalArgumentException("Unsupported property type for path: $path")
+        if(logEntries.containsKey(path))  return
+
+        var entryView: BasePropertyView<*>? = null
+
+        when (value) {
+            is DoubleProperty, is IntegerProperty, is FloatProperty, is LongProperty -> {
+                entryView = NumberPropertyView(path, value.value)
+
+                value.addListener { _, _, newValue ->
+                    (entryView).updateValue(newValue)
+                }
             }
 
-            when (value) {
-                is DoubleProperty, is IntegerProperty, is FloatProperty, is LongProperty ->
-                    value.addListener { _, _, newValue ->
-                        (entryView as NumberPropertyView).updateValue(newValue)
-                    }
-                is BooleanProperty ->
-                    value.addListener { _, _, newValue ->
-                        (entryView as BooleanPropertyView).updateValue(newValue)
-                    }
-            }
+            is BooleanProperty -> {
+                entryView = BooleanPropertyView(path, value.value)
 
-            logEntries[path] = entryView
-            root.children.add(logEntries[path])
+                value.addListener { _, _, newValue ->
+                    (entryView).updateValue(newValue)
+                }
+            }
         }
+
+        logEntries[path] = entryView ?: return
+        root.children.add(logEntries[path])
     }
 }
