@@ -9,7 +9,7 @@ import org.vismayb.physfx.view.Sprite
 
 class ShapedWorld(val bodies: Map<Body, Sprite>) : AbstractWorld(bodies.keys.toList()) {
     var bodyPosX: SimpleDoubleProperty = SimpleDoubleProperty(bodies.keys.first().position.x)
-    var bodyPoseY: SimpleDoubleProperty = SimpleDoubleProperty(bodies.keys.first().position.y)
+    var bodyPosY: SimpleDoubleProperty = SimpleDoubleProperty(bodies.keys.first().position.y)
 
     init {
         bodies.forEach { _, sprite ->
@@ -24,7 +24,7 @@ class ShapedWorld(val bodies: Map<Body, Sprite>) : AbstractWorld(bodies.keys.toL
             sprite.x = body.aabb.minX
             sprite.y = body.aabb.minY
             bodyPosX.set(body.position.x)
-            bodyPoseY.set(body.position.y)
+            bodyPosY.set(body.position.y)
         }
     }
 }
