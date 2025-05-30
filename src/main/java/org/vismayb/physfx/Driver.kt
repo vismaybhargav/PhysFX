@@ -10,7 +10,6 @@ import org.vismayb.physfx.logging.LoggingView
 import org.vismayb.physfx.math.Vector2D
 import org.vismayb.physfx.sim.SimConstants
 import org.vismayb.physfx.sim.body.Body
-import org.vismayb.physfx.sim.unit.Force
 import org.vismayb.physfx.view.Sprite
 import org.vismayb.physfx.view.world.ShapedWorld
 
@@ -37,7 +36,7 @@ class Driver : Application() {
             10.0
         )
 
-        val frictionForce = Force(0.30 * body1.mass * SimConstants.GRAVITY, 180.0)
+        //val frictionForce = Force(0.30 * body1.mass * SimConstants.GRAVITY, 180.0)
 
         val sprite1 = Sprite(body1.position.x, body1.position.y, 50.0, 50.0, Color.color(1.0, 0.0, 0.0, 0.5), true, Color.RED)
 
@@ -70,15 +69,16 @@ class Driver : Application() {
             }
         }
 
-        //== END WORLD CODE ==//
+        val logging = LoggingView() // TODO: This will become a singleton later
 
-        //== Logging Stuff ==//
-        val logging = LoggingView()
-        logging.addListener("X: ",world.bodyPosX)
-        logging.addListener("Y: ",world.bodyPoseY)
+        // Logging code is as easy as adding a listener to a property,
+        // no immediate mode logging !
+        logging.addEntry("X",world.bodyPosX)
+        logging.addEntry("Y",world.bodyPosY)
+        logging.addEntry("Running", world.running)
 
+        logging.show() // Show the logging window
 
-        logging.show()
         primaryStage.scene = scene
         primaryStage.show()
     }

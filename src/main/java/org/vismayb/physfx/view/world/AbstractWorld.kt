@@ -1,6 +1,7 @@
 package org.vismayb.physfx.view.world
 
 import javafx.animation.AnimationTimer
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.Group
 import org.vismayb.physfx.sim.body.Body
 
@@ -11,21 +12,21 @@ abstract class AbstractWorld(bodies: List<Body>) : Group() {
             bodies.forEach { it.update(1 / 60.0) }
         }
     }
-    var running = false
+    var running = SimpleBooleanProperty(false)
 
     abstract fun update(now: Long)
 
     fun run() {
         timer.start()
-        running = true
+        running.set(true)
     }
 
     fun toggle() {
-        if (running) stop() else run()
+        if (running.get()) stop() else run()
     }
 
     fun stop() {
         timer.stop()
-        running = false
+        running.set(false)
     }
 }
